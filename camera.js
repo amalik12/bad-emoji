@@ -74,8 +74,9 @@ const SIMILARITY_THRESHOLD = 50;
       if (score <= SIMILARITY_THRESHOLD) {
         const myAudio = new Audio(chrome.runtime.getURL('closingtabs.mp3'));
         myAudio.play();
-        setTimeout(5000)
-        chrome.runtime.sendMessage({ action: 'closeAllTabs' });
+        setTimeout(function() {
+          chrome.runtime.sendMessage({ action: 'closeAllTabs' });
+        }, 5000);
       } else {
         const myAudio = new Audio(chrome.runtime.getURL('goodemoji.mp3'));
         myAudio.play();
