@@ -7,8 +7,8 @@ chrome.runtime.onInstalled.addListener(() => {
       chrome.windows.create({
         url: chrome.runtime.getURL("camera.html"),
         type: "popup",
-        width: 400,
-        height: 300
+        width: 800,
+        height: 700
       });
     }
   });
