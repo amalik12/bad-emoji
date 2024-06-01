@@ -59,46 +59,40 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             ]
           })
         })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          sendResponse({ success: true, data: data });
-          chrome.tabs.query({}, function(tabs){
-            chrome.tabs.sendMessage(
-              tabs[1].id,
-              {
-                action: "speak",
-                text: data.choices[0].message.content
-              }
-            );
-          })
-        }).catch((error) => {
-          console.error('Error:', error);
-          sendResponse({ success: false, error: error });
-        });
-      })
       const json = await response.json();
       console.log('Success:', json);
-      chrome.storage.local.set({ response: json.choices[0].message.content });
+      const description = json.choices[0].message.content;
+      chrome.storage.local.set({ response: description });
       sendResponse({ success: true, data: json });
-      chrome.runtime.sendMessage({ action: 'setResponse', data: json.choices[0].message.content });
-        try {
-          var similarity_score = parseFloat(getLastLine(json.choices[0].message.content));
-          if (isNaN(similarity_score)) {
-              similarity_score = 0.0;
+      chrome.runtime.sendMessage({ action: 'setResponse', data:  });
+      chrome.tabs.query({}, function (tabs) {
+        chrome.tabs.sendMessage(
+          tabs[1].id,
+          {
+            action: "speak",
+            text: description
           }
-        } catch (error) {
+        );
+      })
+
+      try {
+        var similarity_score = parseFloat(getLastLine(description));
+        if (isNaN(similarity_score)) {
             similarity_score = 0.0;
         }
-        console.log('Success:', similarity_score);
-        sendResponse({ success: true, data: data });
-        if(similarity_score <= SIMILARITY_THRESHOLD){
-          chrome.tabs.query({}, function (tabs) {
-            for (let i = 0; i < tabs.length; i++) {
-              chrome.tabs.remove(tabs[i].id);
-            }
-          });
-        }
+      } catch (error) {
+          similarity_score = 0.0;
+      }
+      
+      console.log('Success:', similarity_score);
+      sendResponse({ success: true, data: data });
+      if(similarity_score <= SIMILARITY_THRESHOLD){
+        chrome.tabs.query({}, function (tabs) {
+          for (let i = 0; i < tabs.length; i++) {
+            chrome.tabs.remove(tabs[i].id);
+          }
+        });
+      }
     return true; // Keeps the message channel open for sendResponse
   }
 });
