@@ -26,15 +26,19 @@
             margin-bottom: 30px;
         }
 
-        #video {
+        #image-container {
             border-radius: 10px;
             box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.5);
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        #video {
+            display: block;
         }
 
         #snapshot {
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.5);
+            display: none;
         }
 
         #countdown {
@@ -47,10 +51,11 @@
 <body>
     <div class="container">
         <h1 id="countdownHeading">Make the emoji, Taking Picture in 3...</h1>
-        <video id="video" autoplay width="640" height="480"></video>
-        <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
-        <img id="snapshot" src="" alt="Snapshot will appear here">
-        <div id="countdown"></div>
+        <div id="image-container">
+            <video id="video" autoplay width="640" height="480"></video>
+            <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+            <img id="snapshot" src="" alt="Snapshot will appear here">
+        </div>
     </div>
     <script src="camera.js"></script>
 </body>
