@@ -1,16 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Emoji Camera</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Did you enter emoji?</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        #video {
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.5);
+        }
+
+        #snapshot {
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.5);
+        }
+
+        #countdown {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-  <h1>Taking Picture...</h1>
-  <video id="video" autoplay></video>
-  <canvas id="canvas"></canvas>
-  <img id="snapshot" src="" alt="Snapshot will appear here">
-  <script src="camera.js"></script>
+    <div class="container">
+        <h1 id="countdownHeading">Make the emoji, Taking Picture in 3...</h1>
+        <video id="video" autoplay width="640" height="480"></video>
+        <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+        <img id="snapshot" src="" alt="Snapshot will appear here">
+        <div id="countdown"></div>
+    </div>
+    <script src="camera.js"></script>
 </body>
 </html>
