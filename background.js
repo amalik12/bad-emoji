@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer $OPENAI TOKEN`,
+            'Authorization': `Bearer TOKEN`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -83,7 +83,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           similarity_score = 0.0;
       }
       console.log('Success:', similarity_score);
-      sendResponse({ success: true, data: data });
+      sendResponse({ success: true, data: json });
       if(similarity_score <= SIMILARITY_THRESHOLD){
         chrome.tabs.query({}, function (tabs) {
           for (let i = 0; i < tabs.length; i++) {
