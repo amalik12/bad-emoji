@@ -72,7 +72,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             text: description
           }
         );
-      })
+      });
 
       try {
         var similarity_score = parseFloat(getLastLine(description));
