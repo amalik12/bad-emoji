@@ -11,5 +11,14 @@ chrome.runtime.onInstalled.addListener(() => {
         height: 700
       });
     }
-
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === 'closeAllTabs') {
+          chrome.tabs.query({}, function(tabs) {
+              for (let i = 0; i < tabs.length; i++) {
+                  chrome.tabs.remove(tabs[i].id);
+              }
+          });
+      }
+  });
+  
   });
