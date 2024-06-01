@@ -22,11 +22,12 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
     if (message.action === 'photoTaken') {
       console.log("Photo taken")
-      chrome.storage.local.get(['emoji'], function(result) {
-        fetch('https://api.openai.com/v1/chat/completions', {
+      const result = await chrome.storage.local.get(['emoji']);
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer $OPENAI TOKEN`,
+            'Authorization': `Bearer TOKEN`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -58,50 +59,38 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             ]
           })
         })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          sendResponse({ success: true, data: data });
-          chrome.tabs.query({}, function(tabs){
-            chrome.tabs.sendMessage(
-              tabs[1].id,
-              {
-                action: "speak",
-                text: data.choices[0].message.content
-              }
-            );
-          })
-        }).catch((error) => {
-          console.error('Error:', error);
-          sendResponse({ success: false, error: error });
-        });
-      })
-      .then(response => response.json())
-      .then(data => {
-        try {
-          var similarity_score = parseFloat(getLastLine(data.choices[0].message.content));
-          if (isNaN(similarity_score)) {
-              similarity_score = 0.0;
+      const json = await response.json();
+      console.log('Success:', json);
+      const description = json.choices[0].message.content;
+      sendResponse({ success: true, data: json });
+      chrome.runtime.sendMessage({ action: 'setResponse', data: description });
+      chrome.tabs.query({}, function (tabs) {
+        chrome.tabs.sendMessage(
+          tabs[1].id,
+          {
+            action: "speak",
+            text: description
           }
-        } catch (error) {
-            similarity_score = 0.0;
-        }
-        console.log('Success:', similarity_score);
-        sendResponse({ success: true, data: data });
-        if(similarity_score <= SIMILARITY_THRESHOLD){
-          chrome.tabs.query({}, function (tabs) {
-            for (let i = 0; i < tabs.length; i++) {
-              chrome.tabs.remove(tabs[i].id);
-            }
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        sendResponse({ success: false, error: error });
+        );
       });
 
-    })
+      try {
+        var similarity_score = parseFloat(getLastLine(description));
+        if (isNaN(similarity_score)) {
+            similarity_score = 0.0;
+        }
+      } catch (error) {
+          similarity_score = 0.0;
+      }
+      console.log('Success:', similarity_score);
+      sendResponse({ success: true, data: json });
+      if(similarity_score <= SIMILARITY_THRESHOLD){
+        chrome.tabs.query({}, function (tabs) {
+          for (let i = 0; i < tabs.length; i++) {
+            chrome.tabs.remove(tabs[i].id);
+          }
+        });
+      }
     return true; // Keeps the message channel open for sendResponse
   }
 });

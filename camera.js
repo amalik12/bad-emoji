@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const canvas = document.getElementById('canvas');
   const snapshot = document.getElementById('snapshot');
   const countdownHeading = document.getElementById('countdownHeading');
+  const response = document.getElementById('response');
+  const loading = document.getElementById('loading');
 
   const result = await chrome.storage.local.get(['emoji']);
   const emoji = result.emoji;
@@ -30,6 +32,9 @@ document.addEventListener('DOMContentLoaded', async () => {
               countdownHeading.style.display = 'none';
               takeSnapshot();
           }
+          if (countdownValue < 0) {
+            loading.textContent += '.';
+          }
       }, 1000);
   })
   .catch((err) => {
@@ -50,6 +55,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       canvas.style.display = 'none';
 
       // Send the image back to the background script or store it
+      loading.textContent = 'Analyzing...';
       chrome.runtime.sendMessage({ action: 'photoTaken', image: dataUrl });
   }
+
+chrome.runtime.onMessage.addListener((message) => {
+    if (message.action === 'setResponse') {
+        loading.style.display = 'none';
+        const output = message.data;
+        const description = output;
+        response.textContent = description;
+        response.style.opacity = 1;
+    }
+});
 });
