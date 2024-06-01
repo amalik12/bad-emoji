@@ -1,4 +1,3 @@
-const SIMILARITY_THRESHOLD = 0.5;
 
 function getLastLine(text) {
   const lines = text.split('\n');
@@ -62,17 +61,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       const json = await response.json();
       console.log('Success:', json);
       const description = json.choices[0].message.content;
-      sendResponse({ success: true, data: json });
-      chrome.runtime.sendMessage({ action: 'setResponse', data: description });
-      chrome.tabs.query({}, function (tabs) {
-        chrome.tabs.sendMessage(
-          tabs[1].id,
-          {
-            action: "speak",
-            text: description
-          }
-        );
-      });
 
       try {
         var similarity_score = parseFloat(getLastLine(description));
@@ -83,14 +71,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           similarity_score = 0.0;
       }
       console.log('Success:', similarity_score);
+      chrome.runtime.sendMessage({ action: 'setResponse', data: description, score: similarity_score });
       sendResponse({ success: true, data: json });
-      if(similarity_score <= SIMILARITY_THRESHOLD){
-        chrome.tabs.query({}, function (tabs) {
-          for (let i = 0; i < tabs.length; i++) {
-            chrome.tabs.remove(tabs[i].id);
-          }
-        });
-      }
     return true; // Keeps the message channel open for sendResponse
   }
 });

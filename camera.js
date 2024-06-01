@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const countdownHeading = document.getElementById('countdownHeading');
   const response = document.getElementById('response');
   const loading = document.getElementById('loading');
+const SIMILARITY_THRESHOLD = 50;
+
 
   const result = await chrome.storage.local.get(['emoji']);
   const emoji = result.emoji;
@@ -59,13 +61,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       chrome.runtime.sendMessage({ action: 'photoTaken', image: dataUrl });
   }
 
-chrome.runtime.onMessage.addListener((message) => {
+  chrome.runtime.onMessage.addListener((message) => {
     if (message.action === 'setResponse') {
-        loading.style.display = 'none';
-        const output = message.data;
-        const description = output;
-        response.textContent = description;
-        response.style.opacity = 1;
+      loading.style.display = 'none';
+      const output = message.data;
+      const description = output;
+      response.textContent = description;
+      response.style.opacity = 1;
+
+      const utterance = new SpeechSynthesisUtterance(output);
+      const score = message.score;
+      if (score <= SIMILARITY_THRESHOLD) {
+        chrome.runtime.sendMessage({ action: 'closeAllTabs' });
+      }
+
+      window.speechSynthesis.speak(utterance);
     }
-});
+  });
 });
