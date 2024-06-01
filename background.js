@@ -62,9 +62,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       const json = await response.json();
       console.log('Success:', json);
       const description = json.choices[0].message.content;
-      chrome.storage.local.set({ response: description });
       sendResponse({ success: true, data: json });
-      chrome.runtime.sendMessage({ action: 'setResponse', data:  });
+      chrome.runtime.sendMessage({ action: 'setResponse', data: description });
       chrome.tabs.query({}, function (tabs) {
         chrome.tabs.sendMessage(
           tabs[1].id,
@@ -83,7 +82,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       } catch (error) {
           similarity_score = 0.0;
       }
-      
       console.log('Success:', similarity_score);
       sendResponse({ success: true, data: data });
       if(similarity_score <= SIMILARITY_THRESHOLD){
