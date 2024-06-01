@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const canvas = document.getElementById('canvas');
   const snapshot = document.getElementById('snapshot');
   const countdownHeading = document.getElementById('countdownHeading');
-  const countdown = document.getElementById('countdown');
 
   const result = await chrome.storage.local.get(['emoji']);
   const emoji = result.emoji;
@@ -16,25 +15,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   updateHeading();
 
-  
-  const countdownInterval = setInterval(() => {
-      countdownValue -= 1;
-      updateHeading();
-
-      if (countdownValue === 0) {
-          clearInterval(countdownInterval);
-          countdown.style.display = 'none';
-          countdownHeading.style.display = 'none';
-          takeSnapshot();
-      }
-  }, 1000); // Update countdown every second
-
   navigator.mediaDevices.getUserMedia({
-      video: { width: { exact: 680 }, height: { exact: 480 } }
+      video: { width: { exact: 640 }, height: { exact: 480 } }
   })
   .then((stream) => {
       video.srcObject = stream;
       video.play();
+      const countdownInterval = setInterval(() => {
+          countdownValue -= 1;
+          updateHeading();
+
+          if (countdownValue === 0) {
+              clearInterval(countdownInterval);
+              countdownHeading.style.display = 'none';
+              takeSnapshot();
+          }
+      }, 1000);
   })
   .catch((err) => {
       console.error("Error accessing webcam: ", err);
