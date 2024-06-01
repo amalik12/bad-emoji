@@ -20,42 +20,61 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     chrome.storage.local.set({ emoji: message.data });
   }
 
-  if (message.action === 'photoTaken') {
-    console.log("Photo taken")
-    chrome.storage.local.get(['emoji'], function(result) {
-      fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer API_TOKEN`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          max_tokens: 300,
-          messages: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: `Please answer how close the human in this image is mimicking the ${result.emoji}
-                  The closer the image is to the ${result.emoji}, the higher score it will get.
-                  The lower the score, the more distant the image from the ${result.emoji}.
-                  It needs to be a score between 0 and 1.
-                  Please notice for some ${result.emoji}s, like animals, and buildings for example;
-                  It's OK if the human is just pretending to be that ${result.emoji}.
-                  Make your reasoning funny and make sure to print JUST the score as the last line of your response`
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: message.image
+    if (message.action === 'photoTaken') {
+      console.log("Photo taken")
+      chrome.storage.local.get(['emoji'], function(result) {
+        fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer $OPENAI TOKEN`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            max_tokens: 300,
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: `Please answer how close the human in this image is mimicking the ${result.emoji}
+                    The closer the image is to the ${result.emoji}, the higher score it will get.
+                    It needs to be a score between 0 and 100, read it as a %.
+                    Please notice for some ${result.emoji}s, like animals, and buildings for example;
+                    It's OK if the human is just pretending to be that ${result.emoji}.
+                    Please keep your answer to 1 super funny line plus the score in another line.
+                    Make your reasoning funny and make sure to print JUST the score as the last line of your response
+                    `
                   },
-                }
-              ]
-            }
-          ]
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: message.image
+                    },
+                  }
+                ]
+              }
+            ]
+          })
         })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          sendResponse({ success: true, data: data });
+          chrome.tabs.query({}, function(tabs){
+            chrome.tabs.sendMessage(
+              tabs[1].id,
+              {
+                action: "speak",
+                text: data.choices[0].message.content
+              }
+            );
+          })
+        }).catch((error) => {
+          console.error('Error:', error);
+          sendResponse({ success: false, error: error });
+        });
       })
       .then(response => response.json())
       .then(data => {
