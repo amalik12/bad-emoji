@@ -15,8 +15,9 @@ chrome.runtime.onInstalled.addListener(() => {
 
     if (message.action === 'photoTaken') {
       console.log("Photo taken")
-      chrome.storage.local.get(['emoji'], function(result) {
-        fetch('https://api.openai.com/v1/chat/completions', {
+      const result = await chrome.storage.local.get(['emoji']);
+       
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer API_TOKEN`,
@@ -50,19 +51,14 @@ chrome.runtime.onInstalled.addListener(() => {
             ]
           })
         })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          sendResponse({ success: true, data: data });
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          sendResponse({ success: false, error: error });
-        });
 
-      })
-      return true; // Keeps the message channel open for sendResponse
-    }
+        const json = await response.json();
+        console.log('Success:', json);
+        chrome.storage.local.set({ response: json.choices[0].message.content });
+        sendResponse({ success: true, data: json });
+        chrome.runtime.sendMessage({ action: 'setResponse', data: json.choices[0].message.content });
+        return true; // Keeps the message channel open for sendResponse
+      }
   });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {

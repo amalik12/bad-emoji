@@ -46,6 +46,24 @@
             margin-top: 20px;
             color: #555;
         }
+
+        #response {
+            font-size: 16px;
+            margin-top: 20px;
+            background: #cedde9;
+            padding: 20px 25px;
+            display: block;
+            border-radius: 10px;
+            margin: 20px 24px;
+            text-align: left;
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        #loading {
+            margin-top: 10px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
@@ -56,6 +74,8 @@
             <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
             <img id="snapshot" src="" alt="Snapshot will appear here">
         </div>
+        <div id="loading"></div>
+        <div id="response"></div>
     </div>
     <script src="camera.js"></script>
 </body>
