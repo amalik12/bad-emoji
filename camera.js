@@ -5,14 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const countdownHeading = document.getElementById('countdownHeading');
   const countdown = document.getElementById('countdown');
 
+  const result = await chrome.storage.local.get(['emoji']);
+  const emoji = result.emoji;
+  
   let countdownValue = 3;
 
   function updateHeading() {
-      countdownHeading.textContent = `📸 Smile! Taking Picture in ${countdownValue}...`;
+      countdownHeading.textContent = `📸 Make an expression that matches ${emoji}! Taking Picture in ${countdownValue}...`;
   }
 
   updateHeading();
 
+  
   const countdownInterval = setInterval(() => {
       countdownValue -= 1;
       updateHeading();
