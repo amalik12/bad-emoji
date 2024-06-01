@@ -8,6 +8,13 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.action === 'closeAllTabs') {
+    chrome.tabs.query({}, function (tabs) {
+      for (let i = 0; i < tabs.length; i++) {
+        chrome.tabs.remove(tabs[i].id);
+      }
+    });
+  }
   if (message.action === 'takePhoto') {
     const window = await chrome.windows.create({
       url: chrome.runtime.getURL("camera.html"),
