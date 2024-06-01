@@ -7,3 +7,10 @@ document.addEventListener('input', (event) => {
       }
     }
   });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'speak') {
+      const utterance = new SpeechSynthesisUtterance(message.text);
+      window.speechSynthesis.speak(utterance);
+  }
+});
