@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "name": "Emoji Camera",
+    "version": "1.0",
+    "description": "Takes a picture using the webcam whenever you write an emoji.",
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "storage"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ],
+    "action": {
+      "default_popup": "popup.html"
+    }
+  }

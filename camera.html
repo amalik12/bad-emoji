@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emoji Camera</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    video, canvas { display: none; }
+    #snapshot { display: block; margin: 20px auto; }
+  </style>
+</head>
+<body>
+  <h1>Taking Picture...</h1>
+  <video id="video" autoplay></video>
+  <canvas id="canvas"></canvas>
+  <img id="snapshot" src="" alt="Snapshot will appear here">
+  <script src="camera.js"></script>
+</body>
+</html>
