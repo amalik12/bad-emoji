@@ -71,18 +71,19 @@ const SIMILARITY_THRESHOLD = 50;
 
       const utterance = new SpeechSynthesisUtterance(output);
       const score = message.score;
+      window.speechSynthesis.speak(utterance);
       if (score <= SIMILARITY_THRESHOLD) {
         const myAudio = new Audio(chrome.runtime.getURL('closingtabs.mp3'));
+        myAudio.volume = 0.4;
         myAudio.play();
         setTimeout(function() {
           chrome.runtime.sendMessage({ action: 'closeAllTabs' });
         }, 5000);
       } else {
         const myAudio = new Audio(chrome.runtime.getURL('goodemoji.mp3'));
+        myAudio.volume = 0.4;
         myAudio.play();
       }
-
-      window.speechSynthesis.speak(utterance);
     }
   });
 });
