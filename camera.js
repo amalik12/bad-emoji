@@ -63,7 +63,7 @@ chrome.runtime.onMessage.addListener((message) => {
     if (message.action === 'setResponse') {
         loading.style.display = 'none';
         const output = message.data;
-        const description = output.split("\n")[0];
+        const description = output;
         response.textContent = description;
         response.style.opacity = 1;
     }
