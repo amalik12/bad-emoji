@@ -1,11 +1,18 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const snapshot = document.getElementById('snapshot');
+    let emoji;
+    const title = document.getElementById('title');
 
-  navigator.mediaDevices.getUserMedia({
-    video: { width: { exact: 680 }, height: { exact: 480 } }
-  })
+    const result = await chrome.storage.local.get(['emoji']);
+
+    emoji = result.emoji;
+    title.innerText = `Make an expression that matches ${emoji}`;
+
+    navigator.mediaDevices.getUserMedia({
+      video: { width: { exact: 680 }, height: { exact: 480 } }
+    })
       .then((stream) => {
         video.srcObject = stream;
         video.play();
