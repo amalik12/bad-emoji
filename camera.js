@@ -10,7 +10,7 @@ const SIMILARITY_THRESHOLD = 50;
 
   const result = await chrome.storage.local.get(['emoji']);
   const emoji = result.emoji;
-  
+
   let countdownValue = 3;
 
   function updateHeading() {
@@ -72,7 +72,13 @@ const SIMILARITY_THRESHOLD = 50;
       const utterance = new SpeechSynthesisUtterance(output);
       const score = message.score;
       if (score <= SIMILARITY_THRESHOLD) {
+        const myAudio = new Audio(chrome.runtime.getURL('closingtabs.mp3'));
+        myAudio.play();
+        setTimeout(5000)
         chrome.runtime.sendMessage({ action: 'closeAllTabs' });
+      } else {
+        const myAudio = new Audio(chrome.runtime.getURL('goodemoji.mp3'));
+        myAudio.play();
       }
 
       window.speechSynthesis.speak(utterance);

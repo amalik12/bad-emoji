@@ -1,4 +1,3 @@
-
 function getLastLine(text) {
   const lines = text.split('\n');
   return lines[lines.length - 1];
